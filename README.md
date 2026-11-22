@@ -1,2 +1,6 @@
-# vagrant-ansible-lab
-A multi-node infrastructure lab built with Vagrant and VMware, using Ansible for automated provisioning and Docker installation across a manager node and three worker nodes.
+# Vagrant Ansible Lab
+
+Automated local infrastructure lab using Vagrant, VMware Desktop, and Ansible to spin up Debian 12 VMs and deploy Docker.
+
+**Prerequisites:** Vagrant, VMware Desktop, and the `vagrant-vmware-desktop` plugin.
+**Quick Start:** Run `vagrant up` to provision `control-node` and `node` with automated SSH trust.
