@@ -18,6 +18,9 @@ Vagrant.configure("2") do |config|
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
     apt-get install -y ansible
+    if ! grep -qF "ANSIBLE_CONFIG=/home/vagrant/ansible/ansible.cfg"  /etc/environment ; then
+    echo "ANSIBLE_CONFIG=/home/vagrant/ansible/ansible.cfg" >> /etc/environment
+    fi
     SHELL
 
     control.vm.synced_folder "./ansible", "/home/vagrant/ansible"
