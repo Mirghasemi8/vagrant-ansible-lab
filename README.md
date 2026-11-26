@@ -1,4 +1,4 @@
-# Multi-Node DevOps Lab (Vagrant & Ansible)
+# Multi-Node Lab (Vagrant & Ansible)
 
 Automated multi-node Debian 12 lab using Vagrant (`vmware_desktop`) and Ansible, featuring configurable worker node count (`NODE_COUNT`), SSH key distribution via `.keys/`, and on-demand Docker installation triggered from `control-node`.
 
