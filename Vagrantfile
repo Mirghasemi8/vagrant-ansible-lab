@@ -1,6 +1,6 @@
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'vmware_desktop'
 ENV['DEFAULT_DISTRO'] = 'bento/debian-12'
-ENV['DEFAULT_NODE_COUNTS'] = '3'
+ENV['NODE_COUNT'] = "3"
 
 Vagrant.configure("2") do |config|
 
@@ -32,24 +32,30 @@ Vagrant.configure("2") do |config|
       cp /home/vagrant/.ssh/ansible-key.pub /home/vagrant/.keys
     fi
     SHELL
+
+      control.vm.provision "install-docker", type: "shell", run: "never", privileged: false, inline: <<~SHELL 
+      export ANSIBLE_CONFIG=/home/vagrant/ansible/ansible.cfg
+      cd /home/vagrant/ansible/ && ansible-playbook install-docker.yml
+      SHELL
+
   end
 
+  (1..ENV['NODE_COUNT'].to_i).each do |i|
+    config.vm.define "node-#{i}" do |node|
+      node.vm.hostname = "node-#{i}"
+      node.vm.network "private_network", ip: "192.168.56.#{10 + i}"
 
-  config.vm.define "node" do |node|
-    node.vm.hostname = "node"
-    node.vm.network "private_network", ip: "192.168.56.11"
+      node.vm.synced_folder "./.keys", "/home/vagrant/.keys"
 
-    node.vm.synced_folder "./.keys", "/home/vagrant/.keys"
-
-    node.vm.provision "shell", inline: <<~SHELL, privileged: false
-    if [ -f '/home/vagrant/.keys/ansible-key.pub' ]; then
-    if ! grep -qF "$(cat /home/vagrant/.keys/ansible-key.pub)" /home/vagrant/.ssh/authorized_keys ; then
-    cat /home/vagrant/.keys/ansible-key.pub >> /home/vagrant/.ssh/authorized_keys
-    fi
-    fi
-    SHELL
+      node.vm.provision "shell", inline: <<~SHELL, privileged: false
+      if [ -f '/home/vagrant/.keys/ansible-key.pub' ]; then
+      if ! grep -qF "$(cat /home/vagrant/.keys/ansible-key.pub)" /home/vagrant/.ssh/authorized_keys ; then
+      cat /home/vagrant/.keys/ansible-key.pub >> /home/vagrant/.ssh/authorized_keys
+      fi
+      fi
+      SHELL
+    end
   end
-
 
 
 end
